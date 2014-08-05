@@ -50,7 +50,7 @@ def getpullrequests(repolist, baseurl, token):
                 plr['title'] = pullr['title']
                 plr['user'] = pullr['user']['login']
                 plr['cdate'] = datetime.datetime.strptime(pullr['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime('%c')
-                plr['url'] = pullr['comments_url']
+                plr['url'] = pullr['html_url']
                 newlist[repo].append(plr)
 
     return newlist

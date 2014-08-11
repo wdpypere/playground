@@ -28,7 +28,7 @@ def dorequest(link, token):
         return result
 
     else:
-        print "Something went wrong, got http resonse %s." % result.status_code
+        print "Something went wrong, got http resonse %s, when trying %s." % (result.status_code, link)
         sys.exit(1)
 
 def getpullrequests(repolist, baseurl, token):

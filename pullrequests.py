@@ -7,6 +7,7 @@ Created on Aug 04, 2014
 import datetime
 import requests
 import json
+import sys
 
 GHREPOURL = 'https://api.github.com/orgs/hpcugent/repos'
 GHREPOBASEURL = 'https://api.github.com/repos/hpcugent'
@@ -23,9 +24,12 @@ def dorequest(link, token):
     """
     link += "?access_token=" + token + "&per_page=300"
     result = requests.get(link)
-    if result.ok:
+    if result.status_code == requests.codes.ok:
         return result
 
+    else:
+        print "Something went wrong, got http resonse %s." % result.status_code
+        sys.exit(1)
 
 def getpullrequests(repolist, baseurl, token):
     """

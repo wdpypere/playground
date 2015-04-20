@@ -5,4 +5,6 @@
 
 from schema import Book
 
+testbook = Book(title='test')
+print(testbook)
 

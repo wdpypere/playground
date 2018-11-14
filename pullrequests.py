@@ -67,22 +67,42 @@ def getallrepos(repourl, token):
     repolist = []
     result = dorequest(repourl, token)
     for repo in json.loads(result.text):
-        repolist.append(repo['name'])
+        if not repo['archived']:
+            repolist.append(repo['name'])
 
     return repolist
 
 
-def printpullrequests(prlist):
+def printpullrequests(prlist, name):
     """
     Pretty print a list of pullrequests per repo.
     """
+    reposc = 0
+    prsc = 0
+
     for repo in sorted(prlist.iterkeys()):
-        print repo
-        for prq in prlist[repo]:
-            print " - %s by %s at %s - %s" % (prq['title'], prq['user'], prq['cdate'], prq['url'])
+        if not "easybuild" in repo and not "easyblocks_ugent" in repo:
+            reposc += 1
+            for prq in prlist[repo]:
+                prsc += 1
 
-        print "\n"
+    print '--------------------------------------------'
+    print " %s PR's in %s repositories. (%s)" % (prsc, reposc, name)
+    print '--------------------------------------------'
 
+    for repo in sorted(prlist.iterkeys()):
+        if not "easybuild" in repo and not "easyblocks_ugent" in repo:
+            print repo
+            reposc += 1
+            for prq in prlist[repo]:
+                prsc += 1
+                title = prq['title'].encode('utf-8')
+                user = prq['user'].encode('utf-8')
+                dates = prq['cdate'].encode('utf-8')
+                urls = prq['url'].encode('utf-8')
+                print " - %s by %s at %s - %s" % (title, user, dates, urls)
+
+    print '\n'
 
 def main():
     """
@@ -92,8 +112,15 @@ def main():
     repolistug = getallrepos(UGREPOURL, UGTOKEN)
     prlistgh = getpullrequests(repolistgh, GHREPOBASEURL, GHTOKEN)
     prlistug = getpullrequests(repolistug, UGREPOBASEURL, UGTOKEN)
-    printpullrequests(prlistug)
-    printpullrequests(prlistgh)
+    printpullrequests(prlistug, 'github.ugent.be')
+    printpullrequests(prlistgh, 'github.com')
+
+    print '--------------------------------------------'
+    print "Don't forget that you can see your pull requests, mentions, issues, ... at:"
+    print " - https://github.com/pulls"
+    print " - https://github.com/issues"
+    print " - https://github.ugent.be/pulls"
+    print " - https://github.ugent.be/issues"
 
 
 if __name__ == "__main__":
